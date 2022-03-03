@@ -23,9 +23,8 @@ public class CategorieServ {
         return cateRep.findAll();
     }
 
-    public Categorie findCategorieById(Long id){
-        return cateRep.findCategorieById(id)
-                .orElseThrow(()-> new NotFoundException("Categorie " + id + " n'existe pas!!"));
+    public Optional<Categorie> findCategorieById(Long id){
+        return cateRep.findById(id);
     }
 
     public Categorie CreateCategorie(Categorie categorie){

@@ -30,9 +30,17 @@ public class MembreRes {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Membres> getAllCategorie(@PathVariable("id") Long id ){
-        Membres membres = membreServ.MembreById(id);
-        return new ResponseEntity<>(membres, HttpStatus.OK);
+    public ResponseEntity<String> getAllCategorie(@PathVariable("id") Long id ){
+        JSONObject resp = new JSONObject();
+        Optional<Membres> membres = membreServ.MembreById(id);
+        if(membres.isPresent()){
+            resp.put("Membre",membres.get());
+            return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+        }
+        else{
+            resp.put("Message","ce membre n'existe pas !");
+            return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+           }
     }
 
     @PostMapping("/")
@@ -45,16 +53,31 @@ public class MembreRes {
     public ResponseEntity<String> ModifierCategorie(@PathVariable("id") Long id,@RequestBody Membres membre){
         Optional<Membres> editMembre = membreServ.updateMembre(id,membre);
         JSONObject resp = new JSONObject();
-        resp.put("message","Membre mise à jour avec succès !");
-        return new ResponseEntity<>(resp.toString(),HttpStatus.CREATED);
+        if(editMembre.isPresent()){
+            resp.put("message","Modifié avec succès !");
+            resp.put("Membre",editMembre.get());
+            return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+        }
+        else{
+            resp.put("Message","ce membre n'existe pas !");
+            return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+           }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> SupprimerMembre(@PathVariable("id") Long id){
-        membreServ.deleteMembre(id);
+        
         JSONObject resp = new JSONObject();
-        resp.put("message","Membre supprimé avec succès !");
-        return new ResponseEntity<>(resp.toString(),HttpStatus.OK);
+        Optional<Membres> membres = membreServ.MembreById(id);
+        if(membres.isPresent()){
+            membreServ.deleteMembre(id);
+            resp.put("Message","Membre supprimé avec succès");
+            return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+        }
+        else{
+            resp.put("Message","ce membre n'existe pas !");
+            return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+           }
     }
 
 }

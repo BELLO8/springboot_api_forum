@@ -29,9 +29,18 @@ public class CategorieRes {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Categorie> getAllCategorie(@PathVariable("id") Long id ){
-        Categorie categorie = catServ.findCategorieById(id);
-        return new ResponseEntity<>(categorie, HttpStatus.OK);
+    public ResponseEntity<String> getAllCategorie(@PathVariable("id") Long id ){
+        JSONObject resp = new JSONObject();
+        Optional<Categorie> categorie = catServ.findCategorieById(id);
+       if(categorie.isPresent()){
+           resp.put("Categorie",categorie.get());
+        return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+       }
+       else{
+        resp.put("Message","La categorie n'existe pas !");
+        return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+       }
+        
     }
 
     @PostMapping("/")
@@ -42,18 +51,34 @@ public class CategorieRes {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> ModifierCategorie(@PathVariable("id") Long id,@RequestBody Categorie categorie){
-        Optional<Categorie> Editcategorie = catServ.UpdateCategorie(id,categorie);
         JSONObject resp = new JSONObject();
-        resp.put("message","Categorie mise à jour avec succès !");
-        return new ResponseEntity<>(resp.toString(),HttpStatus.CREATED);
+        Optional<Categorie> Editcategorie = catServ.UpdateCategorie(id,categorie);
+        if(Editcategorie.isPresent()){
+            resp.put("message","Categorie mise à jour avec succès !");
+            resp.put("Categorie",Editcategorie.get());
+            return new ResponseEntity<>(resp.toString(),HttpStatus.CREATED);
+        }
+        else{
+            resp.put("message","la categorie n'existe pas !");
+            return new ResponseEntity<>(resp.toString(),HttpStatus.CREATED);
+        }
+        
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> SupprimerCategorie(@PathVariable("id") Long id){
-        catServ.DeleteCategorie(id);
+        
         JSONObject resp = new JSONObject();
-        resp.put("message","Categorie supprimé avec succès !");
-        return new ResponseEntity<>(resp.toString(),HttpStatus.OK);
+        Optional<Categorie> categorie = catServ.findCategorieById(id);
+        if(categorie.isPresent()){
+            catServ.DeleteCategorie(id);
+            resp.put("message","Categorie supprimé avec succès !");
+            return new ResponseEntity<>(resp.toString(),HttpStatus.OK);
+        }
+        else{
+         resp.put("Message","La categorie n'existe pas !");
+         return new ResponseEntity<>(resp.toString(), HttpStatus.OK);
+        }
     }
 
 }

@@ -21,8 +21,8 @@ public class MembreServ {
         return membreRep.findAll();
     }
 
-    public Membres MembreById(Long id){
-        return membreRep.findById(id).orElseThrow(()-> new NotFoundException("Membre " + id + " n'existe pas!!"));
+    public Optional<Membres> MembreById(Long id){
+        return membreRep.findById(id);
     }
 
     public Membres addMembre(Membres membre){

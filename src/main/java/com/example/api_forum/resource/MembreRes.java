@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.minidev.json.JSONObject;
+
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -20,7 +23,7 @@ public class MembreRes {
         this.membreServ = membreServ;
     }
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<List<Membres>> getAllCategorie(){
         List<Membres> categories = membreServ.listMembre();
         return new ResponseEntity<>(categories, HttpStatus.OK);
@@ -32,22 +35,26 @@ public class MembreRes {
         return new ResponseEntity<>(membres, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ResponseEntity<Membres> AjouterCategorie(@RequestBody Membres membre){
         Membres Newmembre = membreServ.addMembre(membre);
         return new ResponseEntity<>(Newmembre, HttpStatus.CREATED);
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<Membres> ModifierCategorie(@RequestBody Membres membre){
-        Membres editMembre = membreServ.updateMembre(membre);
-        return new ResponseEntity<>(editMembre, HttpStatus.CREATED);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> ModifierCategorie(@PathVariable("id") Long id,@RequestBody Membres membre){
+        Optional<Membres> editMembre = membreServ.updateMembre(id,membre);
+        JSONObject resp = new JSONObject();
+        resp.put("message","Membre mise à jour avec succès !");
+        return new ResponseEntity<>(resp.toString(),HttpStatus.CREATED);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> SupprimerMembre(@PathVariable("id") Long id){
         membreServ.deleteMembre(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        JSONObject resp = new JSONObject();
+        resp.put("message","Membre supprimé avec succès !");
+        return new ResponseEntity<>(resp.toString(),HttpStatus.OK);
     }
 
 }

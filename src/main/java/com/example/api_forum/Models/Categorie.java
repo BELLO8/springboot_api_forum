@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "categorie")
+@Table(name = "forum_categorie")
 public class Categorie implements Serializable {
 
     @Id
@@ -47,6 +47,10 @@ public class Categorie implements Serializable {
 
     public void setCategorie(String categorie) {
         this.categorie = categorie;
+    }
+
+    public Categorie update(Categorie categorie2) {
+        return new Categorie(this.id,categorie2.categorie);
     }
 
 }

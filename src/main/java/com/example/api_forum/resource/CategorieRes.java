@@ -6,7 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import net.minidev.json.JSONObject;
+
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin("*")
 @RestController
@@ -19,7 +22,7 @@ public class CategorieRes {
         this.catServ = catServ;
     }
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<List<Categorie>> getAllCategorie(){
         List<Categorie> categories = catServ.ReadCategorie();
         return new ResponseEntity<>(categories, HttpStatus.OK);
@@ -31,22 +34,26 @@ public class CategorieRes {
         return new ResponseEntity<>(categorie, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ResponseEntity<Categorie> AjouterCategorie(@RequestBody Categorie categorie){
         Categorie Newcategorie = catServ.CreateCategorie(categorie);
         return new ResponseEntity<>(Newcategorie, HttpStatus.CREATED);
     }
 
-    @PutMapping("/edit")
-    public ResponseEntity<Categorie> ModifierCategorie(@RequestBody Categorie categorie){
-        Categorie Editcategorie = catServ.UpdateCategorie(categorie);
-        return new ResponseEntity<>(Editcategorie, HttpStatus.CREATED);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> ModifierCategorie(@PathVariable("id") Long id,@RequestBody Categorie categorie){
+        Optional<Categorie> Editcategorie = catServ.UpdateCategorie(id,categorie);
+        JSONObject resp = new JSONObject();
+        resp.put("message","Categorie mise à jour avec succès !");
+        return new ResponseEntity<>(resp.toString(),HttpStatus.CREATED);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> SupprimerCategorie(@PathVariable("id") Long id){
         catServ.DeleteCategorie(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        JSONObject resp = new JSONObject();
+        resp.put("message","Categorie supprimé avec succès !");
+        return new ResponseEntity<>(resp.toString(),HttpStatus.OK);
     }
 
 }

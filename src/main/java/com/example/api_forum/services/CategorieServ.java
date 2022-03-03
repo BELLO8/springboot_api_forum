@@ -4,9 +4,11 @@ import com.example.api_forum.Models.Categorie;
 import com.example.api_forum.repo.CategorieRepo;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import com.example.api_forum.exception.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -23,15 +25,18 @@ public class CategorieServ {
 
     public Categorie findCategorieById(Long id){
         return cateRep.findCategorieById(id)
-                .orElseThrow(()-> new RuntimeException("Categorie " + id + "n'existe pas!!"));
+                .orElseThrow(()-> new NotFoundException("Categorie " + id + " n'existe pas!!"));
     }
 
     public Categorie CreateCategorie(Categorie categorie){
         return cateRep.save(categorie);
     }
 
-    public Categorie UpdateCategorie(Categorie categorie){
-        return cateRep.save(categorie);
+    public Optional<Categorie> UpdateCategorie(Long id,Categorie categorie){
+        return cateRep.findCategorieById(id).map(cat->{
+            Categorie updateCate = cat.update(categorie);
+            return cateRep.save(updateCate);
+        });
     }
 
     public void DeleteCategorie(Long id){

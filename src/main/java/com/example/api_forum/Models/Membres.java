@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name="membre")
+@Table(name="forum_membre")
 public class Membres implements Serializable {
 
     @Id
@@ -41,5 +41,9 @@ public class Membres implements Serializable {
 
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
+    }
+
+    public Membres updateWith(Membres membre) {
+        return new Membres(this.id, membre.pseudo);
     }
 }

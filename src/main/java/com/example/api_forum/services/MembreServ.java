@@ -1,6 +1,7 @@
 package com.example.api_forum.services;
 
 import com.example.api_forum.Models.Membres;
+import com.example.api_forum.exception.*;
 import com.example.api_forum.repo.MembreRep;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +22,18 @@ public class MembreServ {
     }
 
     public Membres MembreById(Long id){
-        return membreRep.findById(id).orElseThrow(()-> new RuntimeException("Membre " + id + "n'existe pas!!"));
+        return membreRep.findById(id).orElseThrow(()-> new NotFoundException("Membre " + id + " n'existe pas!!"));
     }
 
     public Membres addMembre(Membres membre){
         return membreRep.save(membre);
     }
 
-    public Membres updateMembre(Membres membre){
-        return membreRep.save(membre);
+    public Optional<Membres> updateMembre(Long id,Membres membre){
+        return membreRep.findById(id).map(mbre->{
+            Membres updateMembre = mbre.updateWith(membre);
+            return membreRep.save(updateMembre);
+        });
     }
 
     public void  deleteMembre(Long id){
